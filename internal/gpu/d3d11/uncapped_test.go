@@ -1204,6 +1204,10 @@ func refusedThroughSettle(t *testing.T, r *Renderer, p *refusingPresent) {
 			kind, w2, h2, bw, bh, r.putOff, r.aside, r.w, r.h, w, h)
 	}
 	putOffNow(w2, h2)
+	// The window changes size again, within the new buffers, as the user
+	// drags on: without, the frame after the call settles the swap chain,
+	// as the call waited past settleDelay/2.
+	w2--
 	frame(w2, h2)
 	if info := r.FrameInfo(); r.putOff || r.w != w2 || r.h != h2 || r.bw < w2 || r.bh < h2 || !r.resizing || !strings.Contains(info, "after ResizeBuffers waited on another thread") {
 		t.Fatalf("%s: a %dx%d frame once ResizeBuffers returned: put off %v, showing %dx%d in %dx%d buffers, resizing %v, says %q; want drawn, resizing",
